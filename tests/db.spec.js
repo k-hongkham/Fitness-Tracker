@@ -55,10 +55,10 @@ describe("Database", () => {
         expect(userToCreateAndUpdate.username).toBe(userCredentials.username);
         expect(queriedUser.username).toBe(userCredentials.username);
       });
-      it("EXTRA CREDIT: Does not store plaintext password in the database", async () => {
+      xit("EXTRA CREDIT: Does not store plaintext password in the database", async () => {
         expect(queriedUser.password).not.toBe(userCredentials.password);
       });
-      it("EXTRA CREDIT: Hashes the password (salted 10 times) before storing it to the database", async () => {
+      xit("EXTRA CREDIT: Hashes the password (salted 10 times) before storing it to the database", async () => {
         const hashedVersion = bcrypt.compareSync(
           userCredentials.password,
           queriedUser.password
@@ -105,7 +105,7 @@ describe("Database", () => {
         expect(activities).toEqual(activitiesFromDatabase);
       });
     });
-    xdescribe("createActivity({ name, description })", () => {
+    describe("createActivity({ name, description })", () => {
       it("Creates and returns the new activity", async () => {
         const activityToCreate = {
           name: "elliptical",
@@ -116,7 +116,7 @@ describe("Database", () => {
         expect(createdActivity.description).toBe(activityToCreate.description);
       });
     });
-    xdescribe("updateActivity", () => {
+    describe("updateActivity", () => {
       it("Updates name and description of an activity without affecting the ID. Returns the updated Activity.", async () => {
         const [activityToUpdate] = await getAllActivities();
         activityToUpdate.name = "standing barbell curl";
