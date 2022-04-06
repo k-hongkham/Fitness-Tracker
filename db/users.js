@@ -10,7 +10,7 @@ async function createUser({ username, password }) {
       INSERT INTO users(username, password)
       VALUES($1,$2) 
       ON CONFLICT (username) DO NOTHING
-    RETURNING *;
+      RETURNING *;
       `,
       [username, password]
     );
@@ -48,14 +48,13 @@ async function getUserById(id) {
       WHERE id = ${id}
       `
     );
-    if (!user){
-      return null
+    if (!user) {
+      return null;
     }
     delete user.password;
     return user;
   } catch (error) {
     throw error;
-    
   }
 }
 
@@ -67,9 +66,10 @@ async function getUserByUsername(username) {
       `
       SELECT * FROM users,
       WHERE username = $1;
-      `,[username]
-    )
-    return user
+      `,
+      [username]
+    );
+    return user;
   } catch (error) {
     throw error;
   }
