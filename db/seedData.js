@@ -1,7 +1,8 @@
 // require in the database adapter functions as you write them (createUser, createActivity...)
 // const { } = require('./');
 const client = require("./client");
-const { createUser, getUserById, createActivity } = require("./index.js");
+const { createUser, createActivity } = require("./");
+//const { createUser } = require("./users");
 
 async function dropTables() {
   console.log("Dropping All Tables...");
@@ -76,7 +77,7 @@ async function createInitialUsers() {
     const users = await Promise.all(usersToCreate.map(createUser));
 
     console.log("Users created:");
-    console.log(users);
+    //console.log(users);
     console.log("Finished creating users!");
   } catch (error) {
     console.error("Error creating users!");
@@ -241,8 +242,8 @@ async function rebuildDB() {
     await createTables();
     await createInitialUsers();
     await createInitialActivities();
-    // await createInitialRoutines();
-    // await createInitialRoutineActivities();
+    await createInitialRoutines();
+    await createInitialRoutineActivities();
   } catch (error) {
     console.log("Error during rebuildDB");
     throw error;
