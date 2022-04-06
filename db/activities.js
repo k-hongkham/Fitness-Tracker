@@ -19,7 +19,7 @@ async function getActivityById(id) {
   }
 }
 
-async function getActivities() {
+async function getAllActivities() {
   try {
     const {
       rows: [activity],
@@ -116,7 +116,7 @@ async function attachActivitiesToRoutines(routines) {
 
 module.exports = {
   getActivityById,
-  getActivities,
+  getAllActivities,
   createActivity,
   updateActivity,
   attachActivitiesToRoutines,
