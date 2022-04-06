@@ -6,12 +6,14 @@ async function createUser({ username, password }) {
       rows: [user],
     } = await client.query(
       `
-      INSERT INTO users (username, password)
+      INSERT INTO users(username, password)
       VALUES($1,$2) 
+      ON CONFLICT (username) DO NOTHING
     RETURNING *;
       `,
       [username, password]
     );
+    delete user.password;
     return user;
   } catch (error) {
     throw error;

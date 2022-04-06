@@ -1,71 +1,68 @@
 // require in the database adapter functions as you write them (createUser, createActivity...)
-// const { createUser} = require('./');
+// const { } = require('./');
 const client = require("./client");
-const { createUser } = require("./");
+const { createUser, getUserById, createActivity } = require("./index.js");
 
 async function dropTables() {
+  console.log("Dropping All Tables...");
+  // drop all tables, in the correct order
   try {
-    console.log("Dropping All Tables...");
-    // drop all tables, in the correct order
+    console.log("Dropping tables...");
+
     await client.query(`
-  DROP TABLE IF EXISTS routine_activities;
-  DROP TABLE IF EXISTS routines;
-  DROP TABLE IF EXISTS activities;
-  DROP TABLE IF EXISTS users;
-  `);
-    console.log("Finished dropping Tables");
+      DROP TABLE IF EXISTS routine_activities;
+      DROP TABLE IF EXISTS routines;
+      DROP TABLE IF EXISTS activities;
+      DROP TABLE IF EXISTS users;
+    `);
+    console.log("Tables dropped!");
   } catch (error) {
-    console.error("errors dropping tables!");
+    console.error("ERROR dropping tables!");
     throw error;
   }
 }
 
 async function createTables() {
+  console.log("Starting to build tables...");
+  // create all tables, in the correct order
   try {
-    console.log("Starting to build tables...");
-    // create all tables, in the correct order
+    console.log("Building tables...");
+
     await client.query(`
-    CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    username varchar(255) UNIQUE NOT NULL,
-    password varchar(255) NOT NULL
-  );
-  CREATE TABLE activities (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) UNIQUE NOT NULL,
-    description TEXT NOT NULL
-  );
-  CREATE TABLE routines (
-    id SERIAL PRIMARY KEY,
-    "creatorId" INTEGER,
-    "isPublic" BOOLEAN DEFAULT false,
-    name VARCHAR(255) UNIQUE NOT NULL,
-    goal TEXT NOT NULL,
-    FOREIGN KEY ("creatorId") REFERENCES users(id)
-  );
-  CREATE TABLE routine_activities (
-    id SERIAL PRIMARY KEY,
-    "routineId" INTEGER,
-    "activityId" INTEGER,
-    duration INTEGER,
-    count INTEGER,
-    FOREIGN KEY ("routineId") REFERENCES routines(id),
-    FOREIGN KEY ("activityId") REFERENCES activities(id)
-  );
-
-
-  `);
-    console.log("Finished building tables!");
+        CREATE TABLE users (
+          id SERIAL PRIMARY KEY,
+          username varchar(255) UNIQUE NOT NULL,
+          password varchar(255) NOT NULL
+        );
+        CREATE TABLE activities (
+          id SERIAL PRIMARY KEY,
+          name varchar(255) UNIQUE NOT NULL,
+          description TEXT NOT NULL
+        );
+        CREATE TABLE routines (
+          id SERIAL PRIMARY KEY,
+          "creatorId" INTEGER REFERENCES users(id),
+          "isPublic" BOOLEAN DEFAULT false,
+          name varchar(255) UNIQUE NOT NULL,
+          goal TEXT NOT NULL
+        );
+        CREATE TABLE routine_activities (
+          id SERIAL PRIMARY KEY,
+          "routineId" INTEGER REFERENCES routines(id),
+          "activityId" INTEGER REFERENCES activities(id),
+          duration INTEGER,
+          count INTEGER
+        );
+    `);
+    console.log("Tables built!");
   } catch (error) {
-    console.error("Error building tables!");
+    console.error("ERROR creating tables!");
     throw error;
   }
 }
 
 /* 
-
 DO NOT CHANGE ANYTHING BELOW. This is default seed data, and will help you start testing, before getting to the tests. 
-
 */
 
 async function createInitialUsers() {
@@ -244,8 +241,8 @@ async function rebuildDB() {
     await createTables();
     await createInitialUsers();
     await createInitialActivities();
-    await createInitialRoutines();
-    await createInitialRoutineActivities();
+    // await createInitialRoutines();
+    // await createInitialRoutineActivities();
   } catch (error) {
     console.log("Error during rebuildDB");
     throw error;
@@ -254,6 +251,4 @@ async function rebuildDB() {
 
 module.exports = {
   rebuildDB,
-  dropTables,
-  createTables,
 };
