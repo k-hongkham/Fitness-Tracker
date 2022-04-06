@@ -53,6 +53,14 @@ async function createActivity({ name, description }) {
   }
 }
 
+async function updateActivity({ id, name, description }) {
+  try {
+    return activity;
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   getActivityById,
   getActivities,
