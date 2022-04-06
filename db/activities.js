@@ -53,8 +53,27 @@ async function createActivity({ name, description }) {
   }
 }
 
-async function updateActivity({ id, name, description }) {
+async function updateActivity(id, fields = {}) {
+  const setString = Object.keys(fields)
+    .map((key, index) => `"${key}"=$${index + 1}`)
+    .join(",");
+
+  if (setString.length === 0) {
+    return;
+  }
+
   try {
+    const {
+      rows: [activity],
+    } = await client.query(
+      `
+          UDPATE activities
+          SET ${setString}
+          WHERE id=${id}
+          RETURNING *;
+          `,
+      Object.values(fields)
+    );
     return activity;
   } catch (error) {
     throw error;
@@ -65,4 +84,5 @@ module.exports = {
   getActivityById,
   getActivities,
   createActivity,
+  updateActivity,
 };
