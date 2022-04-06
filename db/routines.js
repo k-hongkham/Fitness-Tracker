@@ -1,47 +1,48 @@
-const { getActivities } = require(".");
+//const { getActivities } = require(".");
 const client = require("./client");
 
-async function getRoutineById (id){
-    try {
-        const {
-            rows: [routine],
-        } = await client.query(
-            `
-            SELECT *
+async function getRoutineById(id) {
+  try {
+    const {
+      rows,
+    } = await client.query(
+      `
+            SELECT id, name 
             FROM routines
-            WHERE id=$1
+            WHERE routine.id = $1
             `,
-            [routine]
-        );
-        return routine;
-    } catch (error) {
-        throw error;
-        
-    }
+      [id]
+    );
+    //console.log (rows)
+    return rows;
+  } catch (error) {
+    throw error;
+  }
 }
 
-async function getRoutinesWithoutActivities (){
-    try {
-        const {
-            rows : [routine],
-        } = await client.query(
+async function getRoutinesWithoutActivities() {
+  try {
+    const { rows } = await client.query(
+      `
+            SELECT "creatorId", "isPublic", name, goal 
+            FROM routines
             `
-            SELECT * FROM routines
-            `
-        )
-        return routine;
-    } catch (error) {
-        throw error;
-        
-    }
+    );
+    return rows;
+  } catch (error) {
+    throw error;
+  }
 }
 
-
-
-
-
-module.exports ={
-    getRoutineById,
-    getRoutinesWithoutActivities,
-
+async function getAllRoutines() {
+  try {
+  } catch (error) {
+    throw error;
+  }
 }
+
+module.exports = {
+  getRoutineById,
+  getRoutinesWithoutActivities,
+  getAllRoutines,
+};
