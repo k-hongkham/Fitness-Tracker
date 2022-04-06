@@ -46,14 +46,16 @@ async function createTables() {
           "isPublic" BOOLEAN DEFAULT false,
           name varchar(255) UNIQUE NOT NULL,
           goal TEXT NOT NULL,
-          FOREIGN KEY ("creatorID") REFERENCES users(id)
+          FOREIGN KEY ("creatorId") REFERENCES users(id)
         );
         CREATE TABLE routine_activities (
           id SERIAL PRIMARY KEY,
           "routineId" INTEGER REFERENCES routines(id),
           "activityId" INTEGER REFERENCES activities(id),
           duration INTEGER,
-          count INTEGER
+          count INTEGER,
+          FOREIGN KEY ("routineId") REFERENCES routines(id),
+          FOREIGN KEY ("activityId") REFERENCES activity(id)
         );
     `);
     console.log("Tables built!");
