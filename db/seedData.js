@@ -47,6 +47,7 @@ async function createTables() {
           name varchar(255) UNIQUE NOT NULL,
           goal TEXT NOT NULL,
           FOREIGN KEY ("creatorId") REFERENCES users(id)
+          
         );
         CREATE TABLE routine_activities (
           id SERIAL PRIMARY KEY,
@@ -55,9 +56,10 @@ async function createTables() {
           duration INTEGER,
           count INTEGER,
           FOREIGN KEY ("routineId") REFERENCES routines(id),
-          FOREIGN KEY ("activityId") REFERENCES activity(id)
+      FOREIGN KEY ("activityId") REFERENCES activities(id)
+          
         );
-    `);
+    `)
     console.log("Tables built!");
   } catch (error) {
     console.error("ERROR creating tables!");
