@@ -10,7 +10,7 @@ async function getActivityById(id) {
         FROM activities
         WHERE id=$1 
       `,
-      [activity]
+      [id]
     );
 
     return activity;

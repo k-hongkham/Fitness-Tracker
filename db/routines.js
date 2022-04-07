@@ -56,8 +56,8 @@ async function getAllRoutines() {
     const { rows } = await client.query(
       `
       SELECT routines.id, "creatorId", "isPublic", routines.name, routines.goal,
-      activities.id, activities.name, activities.description, 
-      from routines
+      activities.id, activities.name, activities.description
+      FROM routines
       
       `
     );

@@ -40,15 +40,15 @@ async function getUser({ username, password }) {
 
 async function getUserById(userId) {
   try {
-    const { rows } = await client.query(
-      `SELECT id, username, password
+    const { rows: [user] } = await client.query(
+      `SELECT *
       FROM users
       WHERE id = $1
       `,
       [userId]
     );
 
-    return rows;
+    return user;
   } catch (error) {
     throw error;
   }
