@@ -283,7 +283,7 @@ describe("Database", () => {
         );
       });
     });
-    xdescribe("getPublicRoutinesByActivity", () => {
+    describe("getPublicRoutinesByActivity", () => {
       let routine, activity;
       beforeAll(async () => {
         activity = await getActivityById(3);
@@ -321,7 +321,7 @@ describe("Database", () => {
         );
       });
     });
-    xdescribe("createRoutine", () => {
+    describe("createRoutine", () => {
       it("creates and returns the new routine", async () => {
         routineToCreateAndUpdate = await createRoutine({
           creatorId: 2,
@@ -335,7 +335,7 @@ describe("Database", () => {
         expect(routineToCreateAndUpdate).toEqual(queriedRoutine);
       });
     });
-    xdescribe("updateRoutine", () => {
+    describe("updateRoutine", () => {
       let queriedRoutine;
       beforeAll(async () => {
         routineToCreateAndUpdate = await updateRoutine({
@@ -400,7 +400,7 @@ describe("Database", () => {
       duration: 10000,
     };
     let routineActivityToCreateAndUpdate;
-    xdescribe("addActivityToRoutine({ routineId, activityId, count, duration })", () => {
+    describe("addActivityToRoutine({ routineId, activityId, count, duration })", () => {
       it("creates a new routine_activity, and return it", async () => {
         routineActivityToCreateAndUpdate = await addActivityToRoutine(
           routineActivityData

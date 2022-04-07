@@ -71,7 +71,7 @@ async function getAllRoutines() {
   }
 }
 
-async function getAllPublicRoutines (){
+async function getAllPublicRoutines() {
   try {
     const { rows } = await client.query(
       `
@@ -83,13 +83,13 @@ async function getAllPublicRoutines (){
       [true]
     );
     const publicRoutines = await attachActivitiesToRoutines(rows);
-    return publicRoutines
+    return publicRoutines;
   } catch (error) {
     throw error;
   }
 }
 
-async function getAllRoutinesByUser ({ username }) {
+async function getAllRoutinesByUser({ username }) {
   try {
     const { rows } = await client.query(
       `
@@ -100,17 +100,17 @@ async function getAllRoutinesByUser ({ username }) {
       `,
       [username]
     );
-    
+
     const userRoutines = await attachActivitiesToRoutines(rows);
-    return userRoutines
+    return userRoutines;
   } catch (error) {
     throw error;
   }
 }
 
-async function getPublicRoutinesByUser ({username}){
+async function getPublicRoutinesByUser({ username }) {
   try {
-    const {rows} = await client.query (
+    const { rows } = await client.query(
       `
       SELECT routines.*, users.username AS "creatorName"
       FROM routines
@@ -119,8 +119,28 @@ async function getPublicRoutinesByUser ({username}){
       `,
       [username, true]
     );
-    const publicUserRoutines =await attachActivitiesToRoutines(rows);
-    return publicUserRoutines
+    const publicUserRoutines = await attachActivitiesToRoutines(rows);
+    return publicUserRoutines;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function getPublicRoutinesByActivity({ id }) {
+  try {
+    const { rows } = await client.query(
+      `
+      SELECT routines.*, users.username AS "creatorName"
+      FROM routines
+      LEFT JOIN routine_activities on routine_activities."routineId" = routines.id
+      LEFT JOIN activities on activities.id = routine_activities."routineId"
+      JOIN users ON routines."creatorId" = users.id
+      WHERE "activityId" = $1 AND "isPublic" = $2
+      `,
+      [id, true]
+    );
+    const publicRoutinesActivities = await attachActivitiesToRoutines(rows);
+    return publicRoutinesActivities;
   } catch (error) {
     throw error;
   }
@@ -133,6 +153,6 @@ module.exports = {
   getAllRoutines,
   getAllPublicRoutines,
   getAllRoutinesByUser,
-  getPublicRoutinesByUser
-
+  getPublicRoutinesByUser,
+  getPublicRoutinesByActivity,
 };
