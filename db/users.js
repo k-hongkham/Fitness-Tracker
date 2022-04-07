@@ -1,4 +1,3 @@
-const { user } = require("pg/lib/defaults");
 const client = require("./client");
 
 async function createUser({ username, password }) {
