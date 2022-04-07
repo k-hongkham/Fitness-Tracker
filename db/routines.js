@@ -108,12 +108,31 @@ async function getAllRoutinesByUser ({ username }) {
   }
 }
 
+async function getPublicRoutinesByUser ({username}){
+  try {
+    const {rows} = await client.query (
+      `
+      SELECT routines.*, users.username AS "creatorName"
+      FROM routines
+      JOIN users ON routines."creatorId" = users.id
+      WHERE username =$1 AND "isPublic" = $2
+      `,
+      [username, true]
+    );
+    const publicUserRoutines =await attachActivitiesToRoutines(rows);
+    return publicUserRoutines
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   createRoutine,
   getRoutineById,
   getRoutinesWithoutActivities,
   getAllRoutines,
   getAllPublicRoutines,
-  getAllRoutinesByUser
+  getAllRoutinesByUser,
+  getPublicRoutinesByUser
 
 };
