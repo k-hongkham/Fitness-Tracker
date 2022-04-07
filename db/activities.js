@@ -1,6 +1,7 @@
 const client = require("./client");
 
 async function getActivityById(id) {
+  console.log("this is the ID:", id);
   try {
     const {
       rows: [activity],
@@ -8,9 +9,9 @@ async function getActivityById(id) {
       `
         SELECT *
         FROM activities
-        WHERE id=${1} 
+        WHERE id=$1 
       `,
-      [activity]
+      [id]
     );
 
     return activity;
@@ -51,28 +52,21 @@ async function createActivity({ name, description }) {
   }
 }
 
-async function updateActivity(id, fields = {}) {
-  const setString = Object.keys(fields)
-    .map((key, index) => `"${key}"=$${index + 1}`)
-    .join(",");
-
-  if (setString.length === 0) {
-    return;
-  }
-
+async function updateActivity({ id, name, description }) {
   try {
     const {
-      rows: [activity],
+      rows: [user],
     } = await client.query(
       `
-          UDPATE activities
-          SET ${setString}
-          WHERE id=${id}
+          UPDATE activities
+          SET name=$2,
+          description=$3
+          WHERE id=$1
           RETURNING *;
           `,
-      Object.values(fields)
+      [id, name, description]
     );
-    return activity;
+    return user;
   } catch (error) {
     throw error;
   }
