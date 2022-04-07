@@ -71,9 +71,28 @@ async function getAllRoutines() {
   }
 }
 
+async function getAllPublicRoutines (){
+  try {
+    const { rows } = await client.query(
+      `
+      SELECT routines.*
+      FROM routines
+      WHERE "isPublic" = $1
+      `,
+      [true]
+    );
+    const publicRoutines = await attachActivitiesToRoutines(rows);
+    return publicRoutines
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   createRoutine,
   getRoutineById,
   getRoutinesWithoutActivities,
   getAllRoutines,
+  getAllPublicRoutines
+
 };
