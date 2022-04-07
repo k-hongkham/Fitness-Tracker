@@ -74,7 +74,7 @@ describe("Database", () => {
       beforeAll(async () => {
         verifiedUser = await getUser(userCredentials);
       });
-      xit("Verifies the passed-in, plain-text password against the password in the database (the hashed password, if this portion is complete)", async () => {
+      it("Verifies the passed-in, plain-text password against the password in the database (the hashed password, if this portion is complete)", async () => {
         const unVerifiedUser = await getUser({
           username: userCredentials.username,
           password: "badPassword",

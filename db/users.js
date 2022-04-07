@@ -25,32 +25,30 @@ async function getUser({ username, password }) {
       rows: [user],
     } = await client.query(
       `
-      SELECT id, username, 
-      FROM users,
+      SELECT username
+      FROM users
       WHERE username = $1 AND password = $2
-      `
+      `,
+      [username, password]
     );
+
     return user;
   } catch (error) {
     throw error;
   }
 }
 
-async function getUserById(id) {
+async function getUserById(userId) {
   try {
-    const {
-      rows: [user],
-    } = await client.query(
-      `SELECT id, username, password,
-      FROM users,
-      WHERE id = ${id}
-      `
+    const { rows } = await client.query(
+      `SELECT id, username, password
+      FROM users
+      WHERE id = $1
+      `,
+      [userId]
     );
-    if (!user) {
-      return null;
-    }
-    delete user.password;
-    return user;
+
+    return rows;
   } catch (error) {
     throw error;
   }
