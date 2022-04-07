@@ -1,7 +1,14 @@
 // require in the database adapter functions as you write them (createUser, createActivity...)
 // const { } = require('./');
 const client = require("./client");
-const { createUser, createActivity } = require("./");
+const {
+  createUser,
+  createActivity,
+  createRoutine,
+  getRoutinesWithoutActivities,
+  getAllActivities,
+  addActivityToRoutine,
+} = require("./");
 //const { createUser } = require("./users");
 
 async function dropTables() {
@@ -59,7 +66,7 @@ async function createTables() {
       FOREIGN KEY ("activityId") REFERENCES activities(id)
           
         );
-    `)
+    `);
     console.log("Tables built!");
   } catch (error) {
     console.error("ERROR creating tables!");

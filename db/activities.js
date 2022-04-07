@@ -21,15 +21,13 @@ async function getActivityById(id) {
 
 async function getAllActivities() {
   try {
-    const {
-      rows: [activity],
-    } = await client.query(
+    const { rows } = await client.query(
       `
             SELECT *
             FROM activities
       `
     );
-    return activity;
+    return rows;
   } catch (error) {
     throw error;
   }
