@@ -23,6 +23,82 @@ async function addActivityToRoutine({
   }
 }
 
+async function getRoutineActivitiesByRoutine(routine) {
+  try {
+    const { rows } = await client.query(
+      `
+      SELECT *
+      FROM routine_activities
+      WHERE routine_activities."routineId"=$1;
+      `,
+      [routine.id]
+    );
+    return rows;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function getRoutineActivityById(id) {
+  try {
+    const { rows: routine } = await client.query(
+      `
+      SELECT *
+      FROM routine_activities
+      WHERE id=$1
+      `,
+      [id]
+    );
+
+    return routine;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function updateRoutineActivity({ id, count, duration }) {
+  try {
+    const {
+      rows: [activity],
+    } = await client.query(
+      `
+      UPDATE routine_activities
+      SET count=COALESCE($2, count),
+      duration=COALESCE($3, duration)
+      WHERE id=$1
+      RETURNING*;
+      `,
+      [id, count, duration]
+    );
+    return activity;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function destroyRoutineActivity(id) {
+  try {
+    const {
+      rows: [activity],
+    } = await client.query(
+      `
+      DELETE
+      FROM routine_activities
+      WHERE routine_activities.id=$1
+      RETURNING*
+      `,
+      [id]
+    );
+    return activity;
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   addActivityToRoutine,
+  getRoutineActivitiesByRoutine,
+  getRoutineActivityById,
+  updateRoutineActivity,
+  destroyRoutineActivity,
 };
