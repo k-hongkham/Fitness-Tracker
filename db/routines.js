@@ -168,6 +168,29 @@ async function updateRoutine({ id, isPublic, name, goal }) {
   }
 }
 
+async function destroyRoutine(id) {
+  try {
+    await client.query(
+      `
+      DELETE
+      FROM routines
+      WHERE routines.id=$1;
+      `,
+      [id]
+    );
+    await client.query(
+      `
+      DELETE 
+      FROM routine_activities
+      WHERE routine_activities."routineId"=$1;
+      `,
+      [id]
+    );
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   createRoutine,
   getRoutineById,
@@ -178,4 +201,5 @@ module.exports = {
   getPublicRoutinesByUser,
   getPublicRoutinesByActivity,
   updateRoutine,
+  destroyRoutine,
 };
