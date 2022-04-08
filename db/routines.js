@@ -19,6 +19,7 @@ async function createRoutine({ creatorId, isPublic, name, goal }) {
     throw error;
   }
 }
+
 async function getRoutineById(id) {
   try {
     const {
@@ -27,7 +28,7 @@ async function getRoutineById(id) {
       `
             SELECT *
             FROM routines
-            WHERE routine.id = $1
+            WHERE routines.id = $1
             `,
       [id]
     );
@@ -146,6 +147,27 @@ async function getPublicRoutinesByActivity({ id }) {
   }
 }
 
+async function updateRoutine({ id, isPublic, name, goal }) {
+  try {
+    const {
+      rows: [routine],
+    } = await client.query(
+      `
+      UPDATE routines
+      SET "isPublic"=COALESCE($2, routines."isPublic"),
+      name=COALESCE($3, name),
+      goal=COALESCE($4, goal)
+      WHERE routines.id=$1
+      RETURNING*;
+      `,
+      [id, isPublic, name, goal]
+    );
+    return routine;
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   createRoutine,
   getRoutineById,
@@ -155,4 +177,5 @@ module.exports = {
   getAllRoutinesByUser,
   getPublicRoutinesByUser,
   getPublicRoutinesByActivity,
+  updateRoutine,
 };
