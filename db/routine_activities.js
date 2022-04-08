@@ -23,6 +23,23 @@ async function addActivityToRoutine({
   }
 }
 
+async function getRoutineActivitiesByRoutine(routine) {
+  try {
+    const { rows } = await client.query(
+      `
+      SELECT *
+      FROM routine_activities
+      WHERE routine_activities."routineId"=$1;
+      `,
+      [routine.id]
+    );
+    return rows;
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   addActivityToRoutine,
+  getRoutineActivitiesByRoutine,
 };
