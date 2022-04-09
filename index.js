@@ -5,7 +5,6 @@ const app = express();
 const apiRouter = require("./api");
 const morgan = require("morgan");
 const cors = require("cors");
-const client = require("./db/client");
 
 app.use(cors());
 app.use(morgan("dev"));
@@ -19,8 +18,10 @@ app.use((req, res, next) => {
   next();
 });
 
-// causes server to crash
-// app.use("/api", apiRouter);
+app.use("/api", apiRouter);
+
+const client = require("./db/client");
+client.connect();
 
 app.listen(PORT, () => {
   console.log(`Server is listening on ${PORT}`);
