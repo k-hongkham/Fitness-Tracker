@@ -1,4 +1,5 @@
 // create the express server here
+require("dotenv").config();
 const PORT = 3000;
 const express = require("express");
 const app = express();
@@ -8,7 +9,6 @@ const cors = require("cors");
 
 app.use(cors());
 app.use(morgan("dev"));
-require("dotenv").config();
 app.use(express.json());
 app.use((req, res, next) => {
   console.log("<____Body Logger START____>");

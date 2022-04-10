@@ -7,6 +7,7 @@ const {
   getPublicRoutinesByUser,
 } = require("../db");
 const { JWT_SECRET } = process.env;
+// const JWT_SECRET = "shhh";
 const { requireUser } = require("./utils");
 
 usersRouter.use(async (req, res, next) => {
@@ -17,13 +18,20 @@ usersRouter.use(async (req, res, next) => {
     next();
   } else if (auth.startsWith(prefix)) {
     const token = auth.slice(prefix.length);
-
     try {
+      console.log("username -line 21", JWT_SECRET);
       const { username } = jwt.verify(token, JWT_SECRET);
 
       if (username) {
         req.user = await getUserByUsername(username);
+        // console.log(
+        //   "THIS IS WHERE REQ.USER IS DEFINED - line 30 users.js",
+        //   req.user
+        // );
         next();
+      } else {
+        res.status(409);
+        next({ name: "badToken", message: "Needs an authentic token" });
       }
     } catch ({ name, message }) {
       next({ name, message });
@@ -96,8 +104,8 @@ usersRouter.post("/login", async (req, res, next) => {
     const user = await getUserByUsername(username);
     if (user && user.password == password) {
       const token = jwt.sign({ username, id: user.id }, process.env.JWT_SECRET);
-      res.send({ message: "YOU'RE LOGGED IN!", token });
-      console.log("I IS HERE");
+
+      res.send({ user, token });
     }
     //THIS IS WHERE ERROR OCCURS
     else {
