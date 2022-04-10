@@ -27,7 +27,7 @@ usersRouter.use(async (req, res, next) => {
     res.status(404);
     next({
       name: "AuthorizationHeaderError",
-      message: `Authorication token must start with ${prefix}`,
+      message: `AuthoriZation token must start with ${prefix}`,
     });
   }
 });
@@ -42,8 +42,7 @@ usersRouter.post("/register", async (req, res, next) => {
         name: "UserExistsError",
         message: "A user by that username already exists",
       });
-    }
-    if (password.length < 8) {
+    } else if (password.length < 8) {
       res.status(411);
       next({
         name: "Password Error",
@@ -54,24 +53,56 @@ usersRouter.post("/register", async (req, res, next) => {
         username,
         password,
       });
-      const token = jwt.sign(
-        {
-          id: user.id,
-          username,
-        },
-        process.env.JWT_SECRET,
-        {
-          expiresIn: "1w",
-        }
-      );
+      //   const token = jwt.sign(
+      //     {
+      //       id: user.id,
+      //       username,
+      //     },
+      //     process.env.JWT_SECRET,
+      //     {
+      //       expiresIn: "1w",
+      //     }
+      //   );
       res.send({
-        message: "Thank you for signing up!",
-        token,
+        user,
       });
     }
   } catch ({ name, message }) {
     next({ name, message });
   }
 });
+
+// usersRouter.use((error, req, res, next) => {
+//   res.send({
+//     name: error.name,
+//     message: error.message,
+//   });
+// });
+
+usersRouter.post("/login", async (req, res, next) => {
+  const { username, password } = req.body;
+  if (!username || !password) {
+    next({
+      name: "MissingCredentialsError",
+      message: "Please supply both a username and password",
+    });
+  }
+  try {
+    const user = await getUserByUsername(username);
+
+    if (user && user.password == password) {
+      const token = jwt.sign({ username, id: user.id }, process.env.JWT_SECRET);
+      res.send({ message: "YOU'RE LOGGED IN!", token });
+    } else {
+      next({
+        name: "IncorrectCredentialsError",
+        message: "Username or Password is incorrect.",
+      });
+    }
+  } catch (error) {
+    throw error;
+  }
+});
+console.log("THIS IS LOGGING IN");
 
 module.exports = usersRouter;
