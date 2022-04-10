@@ -2,7 +2,12 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = process.env;
 const routinesRouter = express.Router();
-const { getAllPublicRoutines, createRoutine, updateRoutine } = require("../db");
+const {
+  getAllPublicRoutines,
+  createRoutine,
+  updateRoutine,
+  destroyRoutine,
+} = require("../db");
 
 routinesRouter.get("/", async (req, res, next) => {
   try {
@@ -63,6 +68,19 @@ routinesRouter.patch("/:routineId", async (req, res, next) => {
       goal,
     });
     res.send(updateRou);
+  } catch (error) {
+    throw error;
+  }
+});
+
+routinesRouter.delete("/:routineId", async (req, res, next) => {
+  const id = req.params.routineId;
+
+  try {
+    const deleteRoutine = await destroyRoutine(id);
+    console.log("***************id", deleteRoutine);
+
+    res.send(deleteRoutine);
   } catch (error) {
     throw error;
   }

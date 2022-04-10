@@ -169,11 +169,14 @@ async function updateRoutine({ id, isPublic, name, goal }) {
 
 async function destroyRoutine(id) {
   try {
-    await client.query(
+    const {
+      rows: [deleted],
+    } = await client.query(
       `
       DELETE
       FROM routines
-      WHERE routines.id=$1;
+      WHERE routines.id=$1
+      RETURNING *;
       `,
       [id]
     );
@@ -185,6 +188,7 @@ async function destroyRoutine(id) {
       `,
       [id]
     );
+    return deleted;
   } catch (error) {
     throw error;
   }
