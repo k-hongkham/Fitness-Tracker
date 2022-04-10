@@ -7,7 +7,6 @@ const {
   updateActivity,
   getPublicRoutinesByActivity,
 } = require("../db");
-const { requireUser } = require("./utils");
 
 activitiesRouter.get("/", async (req, res, next) => {
   try {

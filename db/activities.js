@@ -1,7 +1,6 @@
 const client = require("./client");
 
 async function getActivityById(id) {
-  console.log("this is the ID:", id);
   try {
     const {
       rows: [activity],
