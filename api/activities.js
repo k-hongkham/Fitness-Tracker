@@ -5,6 +5,7 @@ const {
   createActivity,
   getActivityById,
   updateActivity,
+  getPublicRoutinesByActivity,
 } = require("../db");
 const { requireUser } = require("./utils");
 
@@ -12,6 +13,18 @@ activitiesRouter.get("/", async (req, res, next) => {
   try {
     const activities = await getAllActivities();
     res.send(activities);
+  } catch (error) {
+    throw error;
+  }
+});
+
+activitiesRouter.get("/:activityId/routines", async (req, res, next) => {
+  const id = req.params.activityId;
+
+  try {
+    const activity = await getActivityById(id);
+    const publicRoutineByAct = await getPublicRoutinesByActivity(activity);
+    res.send(publicRoutineByAct);
   } catch (error) {
     throw error;
   }
@@ -34,8 +47,8 @@ activitiesRouter.post("/", async (req, res, next) => {
 });
 
 activitiesRouter.patch("/:activityId", async (req, res, next) => {
-  let id = req.params.activityId;
-  let { name, description } = req.body;
+  const id = req.params.activityId;
+  const { name, description } = req.body;
 
   try {
     const updateAct = await updateActivity({
@@ -43,7 +56,6 @@ activitiesRouter.patch("/:activityId", async (req, res, next) => {
       name,
       description,
     });
-    console.log("*************UPDATEACT********LINE 46", updateAct);
     res.send(updateAct);
   } catch (error) {
     throw error;
