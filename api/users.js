@@ -1,8 +1,13 @@
 const express = require("express");
 const usersRouter = express.Router();
 const jwt = require("jsonwebtoken");
-const { getUserByUsername, createUser } = require("../db");
+const {
+  getUserByUsername,
+  createUser,
+  getPublicRoutinesByUser,
+} = require("../db");
 const { JWT_SECRET } = process.env;
+const { requireUser } = require("./utils");
 
 usersRouter.use(async (req, res, next) => {
   const prefix = "Bearer ";
@@ -53,16 +58,16 @@ usersRouter.post("/register", async (req, res, next) => {
         username,
         password,
       });
-      //   const token = jwt.sign(
-      //     {
-      //       id: user.id,
-      //       username,
-      //     },
-      //     process.env.JWT_SECRET,
-      //     {
-      //       expiresIn: "1w",
-      //     }
-      //   );
+      const token = jwt.sign(
+        {
+          id: user.id,
+          username,
+        },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "1w",
+        }
+      );
       res.send({
         user,
       });
@@ -89,20 +94,37 @@ usersRouter.post("/login", async (req, res, next) => {
   }
   try {
     const user = await getUserByUsername(username);
-
     if (user && user.password == password) {
       const token = jwt.sign({ username, id: user.id }, process.env.JWT_SECRET);
       res.send({ message: "YOU'RE LOGGED IN!", token });
-    } else {
+      console.log("I IS HERE");
+    }
+    //THIS IS WHERE ERROR OCCURS
+    else {
       next({
         name: "IncorrectCredentialsError",
         message: "Username or Password is incorrect.",
       });
     }
-  } catch (error) {
-    throw error;
+  } catch ({ name, message }) {
+    res.status(401);
+    next({ name, message });
   }
 });
-console.log("THIS IS LOGGING IN");
+
+usersRouter.get("/me", requireUser, async (req, res, next) => {
+  res.send(req.user);
+});
+
+usersRouter.get("/:username/routines"),
+  async (req, res, next) => {
+    try {
+      const { username } = req.params;
+      const routine = await getPublicRoutinesByUser({ username });
+      res.send(routine);
+    } catch ({ name, message }) {
+      next({ name, message });
+    }
+  };
 
 module.exports = usersRouter;
