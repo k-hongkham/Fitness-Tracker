@@ -19,15 +19,10 @@ usersRouter.use(async (req, res, next) => {
   } else if (auth.startsWith(prefix)) {
     const token = auth.slice(prefix.length);
     try {
-      console.log("username -line 21", JWT_SECRET);
       const { username } = jwt.verify(token, JWT_SECRET);
 
       if (username) {
         req.user = await getUserByUsername(username);
-        // console.log(
-        //   "THIS IS WHERE REQ.USER IS DEFINED - line 30 users.js",
-        //   req.user
-        // );
         next();
       } else {
         res.status(409);
@@ -106,9 +101,7 @@ usersRouter.post("/login", async (req, res, next) => {
       const token = jwt.sign({ username, id: user.id }, process.env.JWT_SECRET);
 
       res.send({ user, token });
-    }
-    //THIS IS WHERE ERROR OCCURS
-    else {
+    } else {
       next({
         name: "IncorrectCredentialsError",
         message: "Username or Password is incorrect.",
@@ -124,15 +117,14 @@ usersRouter.get("/me", requireUser, async (req, res, next) => {
   res.send(req.user);
 });
 
-usersRouter.get("/:username/routines"),
-  async (req, res, next) => {
-    try {
-      const { username } = req.params;
-      const routine = await getPublicRoutinesByUser({ username });
-      res.send(routine);
-    } catch ({ name, message }) {
-      next({ name, message });
-    }
-  };
+usersRouter.get("/:username/routines", async (req, res, next) => {
+  try {
+    const { username } = req.params;
+    const routine = await getPublicRoutinesByUser({ username });
+    res.send(routine);
+  } catch ({ name, message }) {
+    next({ name, message });
+  }
+});
 
 module.exports = usersRouter;
