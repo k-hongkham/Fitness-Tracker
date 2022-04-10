@@ -7,6 +7,7 @@ const {
   createRoutine,
   updateRoutine,
   destroyRoutine,
+  addActivityToRoutine,
 } = require("../db");
 
 routinesRouter.get("/", async (req, res, next) => {
@@ -78,10 +79,26 @@ routinesRouter.delete("/:routineId", async (req, res, next) => {
 
   try {
     const deleteRoutine = await destroyRoutine(id);
-    console.log("***************id", deleteRoutine);
-
     res.send(deleteRoutine);
   } catch (error) {
+    throw error;
+  }
+});
+
+routinesRouter.post("/:routineId/activities", async (req, res, next) => {
+  const { routineId } = req.params;
+  const { activityId, count, duration } = req.body;
+  try {
+    const singleAct = await addActivityToRoutine({
+      routineId,
+      activityId,
+      count,
+      duration,
+    });
+
+    res.send(singleAct);
+  } catch (error) {
+    res.status(409);
     throw error;
   }
 });
