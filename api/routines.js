@@ -2,7 +2,7 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = process.env;
 const routinesRouter = express.Router();
-const { getAllPublicRoutines, createRoutine } = require("../db");
+const { getAllPublicRoutines, createRoutine, updateRoutine } = require("../db");
 
 routinesRouter.get("/", async (req, res, next) => {
   try {
@@ -48,6 +48,23 @@ routinesRouter.post("/", async (req, res, next) => {
       name: "AuthorizationHeaderError",
       message: `AuthoriZation token must start with ${prefix}`,
     });
+  }
+});
+
+routinesRouter.patch("/:routineId", async (req, res, next) => {
+  const id = req.params.routineId;
+  const { isPublic, name, goal } = req.body;
+
+  try {
+    const updateRou = await updateRoutine({
+      id,
+      isPublic,
+      name,
+      goal,
+    });
+    res.send(updateRou);
+  } catch (error) {
+    throw error;
   }
 });
 
