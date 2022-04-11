@@ -10,35 +10,35 @@ const { JWT_SECRET } = process.env;
 // const JWT_SECRET = "shhh";
 const { requireUser } = require("./utils");
 
-usersRouter.use(async (req, res, next) => {
-  const prefix = "Bearer ";
-  const auth = req.header("Authorization");
+// usersRouter.use(async (req, res, next) => {
+//   const prefix = "Bearer ";
+//   const auth = req.header("Authorization");
 
-  if (!auth) {
-    next();
-  } else if (auth.startsWith(prefix)) {
-    const token = auth.slice(prefix.length);
-    try {
-      const { username } = jwt.verify(token, JWT_SECRET);
+//   if (!auth) {
+//     next();
+//   } else if (auth.startsWith(prefix)) {
+//     const token = auth.slice(prefix.length);
+//     try {
+//       const { username } = jwt.verify(token, JWT_SECRET);
 
-      if (username) {
-        req.user = await getUserByUsername(username);
-        next();
-      } else {
-        res.status(409);
-        next({ name: "badToken", message: "Needs an authentic token" });
-      }
-    } catch ({ name, message }) {
-      next({ name, message });
-    }
-  } else {
-    res.status(404);
-    next({
-      name: "AuthorizationHeaderError",
-      message: `AuthoriZation token must start with ${prefix}`,
-    });
-  }
-});
+//       if (username) {
+//         req.user = await getUserByUsername(username);
+//         next();
+//       } else {
+//         res.status(409);
+//         next({ name: "badToken", message: "Needs an authentic token" });
+//       }
+//     } catch ({ name, message }) {
+//       next({ name, message });
+//     }
+//   } else {
+//     res.status(404);
+//     next({
+//       name: "AuthorizationHeaderError",
+//       message: `AuthoriZation token must start with ${prefix}`,
+//     });
+//   }
+// });
 
 usersRouter.post("/register", async (req, res, next) => {
   const { username, password } = req.body;

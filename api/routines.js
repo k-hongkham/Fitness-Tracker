@@ -9,6 +9,7 @@ const {
   destroyRoutine,
   addActivityToRoutine,
 } = require("../db");
+const { requireUser } = require("./utils");
 
 routinesRouter.get("/", async (req, res, next) => {
   try {
@@ -19,7 +20,7 @@ routinesRouter.get("/", async (req, res, next) => {
   }
 });
 
-routinesRouter.post("/", async (req, res, next) => {
+routinesRouter.post("/", requireUser, async (req, res, next) => {
   const { isPublic, name, goal } = req.body;
 
   const prefix = "Bearer ";
