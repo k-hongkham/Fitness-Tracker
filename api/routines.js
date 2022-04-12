@@ -8,6 +8,7 @@ const {
   updateRoutine,
   destroyRoutine,
   addActivityToRoutine,
+  getRoutineActivitiesByRoutine,
 } = require("../db");
 const { requireUser } = require("./utils");
 
@@ -58,6 +59,34 @@ routinesRouter.post("/", requireUser, async (req, res, next) => {
   }
 });
 
+routinesRouter.post("/:routineId/activities", async (req, res, next) => {
+  const { routineId } = req.params;
+  const { activityId, count, duration } = req.body;
+  const inputs = {
+    routineId,
+    activityId,
+    count,
+    duration,
+  };
+  const routineAct = { id: routineId };
+
+  try {
+    const [routineActDup] = await getRoutineActivitiesByRoutine(routineAct);
+    if (!routineActDup || routineActDup.activityId !== inputs.activityId) {
+      const singleAct = await addActivityToRoutine(inputs);
+      res.send(singleAct);
+    } else {
+      res.status(401);
+      next({
+        name: "DuplicateRoutineActivity",
+        message: "RoutineActivity combination already exists",
+      });
+    }
+  } catch ({ name, message }) {
+    next({ name, message });
+  }
+});
+
 routinesRouter.patch("/:routineId", async (req, res, next) => {
   const id = req.params.routineId;
   const { isPublic, name, goal } = req.body;
@@ -82,24 +111,6 @@ routinesRouter.delete("/:routineId", async (req, res, next) => {
     const deleteRoutine = await destroyRoutine(id);
     res.send(deleteRoutine);
   } catch (error) {
-    throw error;
-  }
-});
-
-routinesRouter.post("/:routineId/activities", async (req, res, next) => {
-  const { routineId } = req.params;
-  const { activityId, count, duration } = req.body;
-  try {
-    const singleAct = await addActivityToRoutine({
-      routineId,
-      activityId,
-      count,
-      duration,
-    });
-
-    res.send(singleAct);
-  } catch (error) {
-    res.status(409);
     throw error;
   }
 });

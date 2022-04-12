@@ -31,7 +31,7 @@ activitiesRouter.get("/:activityId/routines", async (req, res, next) => {
   }
 });
 
-activitiesRouter.post("/", async (req, res, next) => {
+activitiesRouter.post("/", requireUser, async (req, res, next) => {
   const { name, description } = req.body;
 
   try {
@@ -47,7 +47,7 @@ activitiesRouter.post("/", async (req, res, next) => {
   }
 });
 
-activitiesRouter.patch("/:activityId", async (req, res, next) => {
+activitiesRouter.patch("/:activityId", requireUser, async (req, res, next) => {
   const id = req.params.activityId;
   const { name, description } = req.body;
 
