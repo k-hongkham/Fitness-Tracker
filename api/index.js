@@ -5,10 +5,12 @@ const express = require ("express");
 const apiRouter = express.Router();
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = process.env;
+const usersRouter = express.Router();
 
 
 apiRouter.get("/health", (req, res, next) => {
     res.send({ message: "Working" });
   });
 
+  apiRouter.use("/users", usersRouter);
   module.exports = apiRouter
