@@ -7,6 +7,7 @@ const apiRouter = express.Router();
 const usersRouter = require("./users");
 const activitiesRouter = require("./activities");
 const routinesRouter = require("./routines");
+const routineActivitiesRouter = require("./routine_activities");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = process.env;
 const { getUserById } = require("../db");
@@ -43,6 +44,7 @@ apiRouter.use(async (req, res, next) => {
 apiRouter.use("/users", usersRouter);
 apiRouter.use("/activities", activitiesRouter);
 apiRouter.use("/routines", routinesRouter);
+apiRouter.use("/routine_activities", routineActivitiesRouter);
 
 apiRouter.use((error, req, res, next) => {
   res.send(error);

@@ -41,7 +41,9 @@ async function getRoutineActivitiesByRoutine(routine) {
 
 async function getRoutineActivityById(id) {
   try {
-    const { rows: routine } = await client.query(
+    const {
+      rows: [routine],
+    } = await client.query(
       `
       SELECT *
       FROM routine_activities
