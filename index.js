@@ -11,6 +11,7 @@ app.use(cors());
 app.use(morgan("dev"));
 require("dotenv").config();
 app.use(express.json());
+
 app.use((req, res, next) => {
   console.log("<____Body Logger START____>");
   console.log(req.body);
@@ -21,6 +22,10 @@ app.use((req, res, next) => {
 
 // causes server to crash
 // app.use("/api", apiRouter);
+app.use("/api", apiRouter);
+app.get("/api", function (req,res, next) {
+  res.json({msg: "This is Cors-enable for all"})
+})
 
 app.listen(PORT, () => {
   console.log(`Server is listening on ${PORT}`);
