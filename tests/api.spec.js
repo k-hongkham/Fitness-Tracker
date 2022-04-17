@@ -71,7 +71,7 @@ describe("API", () => {
       it("Requires username and password. Requires all passwords to be at least 8 characters long.", () => {
         expect(newUser.password.length).toBeGreaterThan(7);
       });
-      it("EXTRA CREDIT: Hashes password before saving user to DB.", async () => {
+      xit("EXTRA CREDIT: Hashes password before saving user to DB.", async () => {
         const {
           rows: [queriedUser],
         } = await client.query(
@@ -152,7 +152,7 @@ describe("API", () => {
       });
     });
   });
-  xdescribe("Activities", () => {
+  describe("Activities", () => {
     let activityToCreateAndUpdate = {
       name: "Bicep Curls",
       description: "They hurt, but you will thank you later",
@@ -218,7 +218,7 @@ describe("API", () => {
       });
     });
   });
-  xdescribe("Routines", () => {
+  describe("Routines", () => {
     let routineToCreateAndUpdate = {
       isPublic: true,
       name: "Elliptical Day",
@@ -332,7 +332,7 @@ describe("API", () => {
       });
     });
   });
-  xdescribe("routine_activities", () => {
+  describe("routine_activities", () => {
     let newRoutineActivityData = {
       routineId: 3,
       activityId: 8,
@@ -346,6 +346,7 @@ describe("API", () => {
           newRoutineActivityData,
           { headers: { Authorization: `Bearer ${token}` } }
         );
+
         expect(respondedRoutineActivity.count).toEqual(
           newRoutineActivityData.count
         );

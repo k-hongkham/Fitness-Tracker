@@ -28,11 +28,11 @@ async function getRoutineById(id) {
       `
             SELECT *
             FROM routines
-            WHERE routines.id = $1
+            WHERE routines.id = $1;
             `,
       [id]
     );
-    //console.log (rows)
+
     return routine;
   } catch (error) {
     throw error;
@@ -59,8 +59,7 @@ async function getAllRoutines() {
       `
       SELECT routines.*, users.username AS "creatorName"
       FROM routines
-      JOIN users ON routines."creatorId" = users.id
-      
+      JOIN users ON routines."creatorId" = users.id;
       `
     );
 
@@ -79,7 +78,7 @@ async function getAllPublicRoutines() {
       SELECT routines.*, users.username AS "creatorName"
       FROM routines
       JOIN users ON routines."creatorId" = users.id
-      WHERE "isPublic" = $1
+      WHERE "isPublic" = $1;
       `,
       [true]
     );
@@ -97,7 +96,7 @@ async function getAllRoutinesByUser({ username }) {
       SELECT routines.*, users.username AS "creatorName"
       FROM routines
       JOIN users ON routines."creatorId" = users.id
-      WHERE username = $1  
+      WHERE username = $1;  
       `,
       [username]
     );
@@ -116,7 +115,7 @@ async function getPublicRoutinesByUser({ username }) {
       SELECT routines.*, users.username AS "creatorName"
       FROM routines
       JOIN users ON routines."creatorId" = users.id
-      WHERE username =$1 AND "isPublic" = $2
+      WHERE username =$1 AND "isPublic" = $2;
       `,
       [username, true]
     );
@@ -136,7 +135,7 @@ async function getPublicRoutinesByActivity({ id }) {
       LEFT JOIN routine_activities on routine_activities."routineId" = routines.id
       LEFT JOIN activities on activities.id = routine_activities."routineId"
       JOIN users ON routines."creatorId" = users.id
-      WHERE "activityId" = $1 AND "isPublic" = $2
+      WHERE "activityId" = $1 AND "isPublic" = $2;
       `,
       [id, true]
     );
@@ -170,11 +169,14 @@ async function updateRoutine({ id, isPublic, name, goal }) {
 
 async function destroyRoutine(id) {
   try {
-    await client.query(
+    const {
+      rows: [deleted],
+    } = await client.query(
       `
       DELETE
       FROM routines
-      WHERE routines.id=$1;
+      WHERE routines.id=$1
+      RETURNING *;
       `,
       [id]
     );
@@ -186,6 +188,7 @@ async function destroyRoutine(id) {
       `,
       [id]
     );
+    return deleted;
   } catch (error) {
     throw error;
   }

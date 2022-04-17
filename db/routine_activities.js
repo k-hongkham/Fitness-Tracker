@@ -41,7 +41,9 @@ async function getRoutineActivitiesByRoutine(routine) {
 
 async function getRoutineActivityById(id) {
   try {
-    const { rows: routine } = await client.query(
+    const {
+      rows: [routineId],
+    } = await client.query(
       `
       SELECT *
       FROM routine_activities
@@ -50,7 +52,25 @@ async function getRoutineActivityById(id) {
       [id]
     );
 
-    return routine;
+    return routineId;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function getRoutineByRoutineActivityId(id) {
+  try {
+    const {
+      rows: [routineId],
+    } = await client.query(
+      `
+      SELECT routine_activities."routineId"
+      FROM routine_activities
+      WHERE id=$1;
+    `,
+      [id]
+    );
+    return routineId;
   } catch (error) {
     throw error;
   }
@@ -101,4 +121,5 @@ module.exports = {
   getRoutineActivityById,
   updateRoutineActivity,
   destroyRoutineActivity,
+  getRoutineByRoutineActivityId,
 };

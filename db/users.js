@@ -27,7 +27,7 @@ async function getUser({ username, password }) {
       `
       SELECT username
       FROM users
-      WHERE username = $1 AND password = $2
+      WHERE username = $1 AND password = $2;
       `,
       [username, password]
     );
@@ -40,10 +40,12 @@ async function getUser({ username, password }) {
 
 async function getUserById(userId) {
   try {
-    const { rows: [user] } = await client.query(
+    const {
+      rows: [user],
+    } = await client.query(
       `SELECT *
       FROM users
-      WHERE id = $1
+      WHERE id = $1;
       `,
       [userId]
     );
@@ -60,7 +62,7 @@ async function getUserByUsername(username) {
       rows: [user],
     } = await client.query(
       `
-      SELECT * FROM users,
+      SELECT * FROM users
       WHERE username = $1;
       `,
       [username]
