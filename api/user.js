@@ -42,8 +42,8 @@ usersRouter.use(async (req, res, next) => {
 
 usersRouter.post("/register", async (req, res, next) => {
   const { username, password } = req.body;
-  const _user = await getUserByUsername(username);
   try {
+    const _user = await getUserByUsername(username);
     if (_user) {
       res.status(409);
       next({
@@ -98,12 +98,9 @@ usersRouter.post("/login", async (req, res, next) => {
   try {
     const user = await getUserByUsername(username);
     if (user && user.password == password) {
-      const token = jwt.sign(
-          { username: user.username, id: user.id }, 
-          process.env.JWT_SECRET
-          );
+      const token = jwt.sign({ username, id: user.id }, process.env.JWT_SECRET);
 
-      res.send({ message: "you're logged in!", token: token });
+      res.send({ user, token });
     } else {
       next({
         name: "IncorrectCredentialsError",
@@ -117,7 +114,17 @@ usersRouter.post("/login", async (req, res, next) => {
 });
 
 usersRouter.get("/me", requireUser, async (req, res, next) => {
-  res.send(req.user);
+  try {
+    const { username } = req.user;
+    const user = await getUserByUsername(username);
+
+    res.send(user);
+  } catch (error) {
+    throw {
+      name: "User error",
+      message: `User requested must be ${username}`,
+    };
+  }
 });
 
 usersRouter.get("/:username/routines", async (req, res, next) => {
