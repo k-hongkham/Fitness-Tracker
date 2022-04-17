@@ -103,7 +103,7 @@ usersRouter.post("/login", async (req, res, next) => {
           process.env.JWT_SECRET
           );
 
-      res.send({ user, token });
+      res.send({ message: "you're logged in!", token: token });
     } else {
       next({
         name: "IncorrectCredentialsError",

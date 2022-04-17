@@ -11,8 +11,8 @@ const { requireUser } = require("./utils");
 
 activitiesRouter.get("/", async (req, res, next) => {
   try {
-    const activities = await getAllActivities();
-    res.send(activities);
+    const allActivities = await getAllActivities();
+    res.send(allActivities);
   } catch (error) {
     throw error;
   }
@@ -62,4 +62,4 @@ activitiesRouter.patch("/:activityId", async (req, res, next) => {
   }
 });
 
-module.exports = activitiesRouter;
+module.exports = activitiesRouter
