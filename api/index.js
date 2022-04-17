@@ -1,7 +1,3 @@
-// create an api router
-// attach other routers from files in this api directory (users, activities...)
-// export the api router
-
 const express = require("express");
 const apiRouter = express.Router();
 const usersRouter = require("./users");
@@ -20,7 +16,6 @@ apiRouter.use(async (req, res, next) => {
   const prefix = `Bearer `;
   const auth = req.header("Authorization");
   if (!auth) {
-    // nothing to see here
     next();
   } else if (auth.startsWith(prefix)) {
     const token = auth.slice(prefix.length);

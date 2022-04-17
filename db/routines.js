@@ -32,7 +32,7 @@ async function getRoutineById(id) {
             `,
       [id]
     );
-    //console.log (rows)
+
     return routine;
   } catch (error) {
     throw error;

@@ -1,9 +1,10 @@
 const express = require("express");
 const routineActivitiesRouter = express.Router();
 const {
-  getRoutineActivityById,
   updateRoutineActivity,
   destroyRoutineActivity,
+  getRoutineById,
+  getRoutineActivityById,
 } = require("../db");
 const { requireUser } = require("./utils");
 
@@ -11,35 +12,26 @@ routineActivitiesRouter.patch(
   "/:routineActivityId",
   requireUser,
   async (req, res, next) => {
-    const id = req.params.routineActivityId;
-    const { count, duration } = req.body;
-    const updateRouActsInfo = {};
-    if (count) {
-      updateRouActsInfo.count = count;
-    }
-
-    if (duration) {
-      updateRouActsInfo.duration = duration;
-    }
-    console.log("UPDATE********", updateRouActsInfo);
     try {
-      const originalRouAct = await getRoutineActivityById(id);
-      console.log("********line 22********", originalRouAct);
-      console.log("********line 23********", req.user.creatorId);
+      const id = req.params.routineActivityId;
+      const { count, duration } = req.body;
+      let creatorId = req.user.id;
+      const updateRouActs = await updateRoutineActivity({
+        id,
+        count,
+        duration,
+      });
 
-      if (originalRouAct === req.user.id) {
-        const updateRouActs = await updateRoutineActivity({
-          id,
-          count,
-          duration,
-        });
-        console.log(
-          "********line 36 - updateRoutineActs********",
+      const routineToActivity = await getRoutineActivityById(id);
+      const routineId = routineToActivity.routineId;
+      const theRoutine = await getRoutineById(routineId);
+      console.log("******theRoutine", theRoutine);
+
+      if (theRoutine.creatorId === creatorId) {
+        const updateActivityOnRoutine = await updateRoutineActivity(
           updateRouActs
         );
-        res.send({
-          activity: updateRouActs,
-        });
+        res.send(updateActivityOnRoutine);
       } else {
         next({
           name: "unauthorizedUser",
@@ -53,32 +45,35 @@ routineActivitiesRouter.patch(
   }
 );
 
-// routineActivitiesRouter.delete(
-//   "/:routineActivityId",
-//   requireUser,
-//   async (req, res, next) => {
-//     const id = req.params.routineActivityId;
-//     const originalRouAct = await getRoutineActivityById(id);
-//     console.log("***********I AM ID", id);
-//     try {
-//       if (originalRouAct && originalRouAct.id === req.user.id) {
-//         const destroyRouAct = await destroyRoutineActivity(routineActivityId);
-//         res.send(destroyRouAct);
-//       } else {
-//         originalRouAct
-//           ? {
-//               name: "UnauthorizedUser",
-//               message: "You cannot delete Routine which is not yours",
-//             }
-//           : {
-//               name: "RoutineNotFoundError",
-//               message: "That routine does not exist",
-//             };
-//       }
-//     } catch (error) {
-//       throw error;
-//     }
-//   }
-// );
+routineActivitiesRouter.delete(
+  "/:routineActivityId",
+  requireUser,
+  async (req, res, next) => {
+    try {
+      const id = req.params.routineActivityId;
+      let creatorId = req.user.id;
+      const originalRouAct = await getRoutineActivityById(id);
+      const routineId = routineActivity.routineId;
+      const routine = await getRoutineById(routineId);
+      if (routine.creatorId === creatorId) {
+        const destroyRouAct = await destroyRoutineActivity(id);
+        console.log("original rouacts", originalRouAct.id);
+        res.send(destroyRouAct);
+      } else {
+        originalRouAct
+          ? {
+              name: "UnauthorizedUser",
+              message: "You cannot delete Routine which is not yours",
+            }
+          : {
+              name: "RoutineNotFoundError",
+              message: "That routine does not exist",
+            };
+      }
+    } catch ({ name, message }) {
+      next({ name, message });
+    }
+  }
+);
 
 module.exports = routineActivitiesRouter;
