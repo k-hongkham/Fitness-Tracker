@@ -98,7 +98,10 @@ usersRouter.post("/login", async (req, res, next) => {
   try {
     const user = await getUserByUsername(username);
     if (user && user.password == password) {
-      const token = jwt.sign({ username, id: user.id }, process.env.JWT_SECRET);
+      const token = jwt.sign(
+          { username: user.username, id: user.id }, 
+          process.env.JWT_SECRET
+          );
 
       res.send({ user, token });
     } else {
