@@ -45,35 +45,35 @@ routineActivitiesRouter.patch(
   }
 );
 
-routineActivitiesRouter.delete(
-  "/:routineActivityId",
-  requireUser,
-  async (req, res, next) => {
-    try {
-      const id = req.params.routineActivityId;
-      let creatorId = req.user.id;
-      const originalRouAct = await getRoutineActivityById(id);
-      const routineId = routineActivity.routineId;
-      const routine = await getRoutineById(routineId);
-      if (routine.creatorId === creatorId) {
-        const destroyRouAct = await destroyRoutineActivity(id);
-        console.log("original rouacts", originalRouAct.id);
-        res.send(destroyRouAct);
-      } else {
-        originalRouAct
-          ? {
-              name: "UnauthorizedUser",
-              message: "You cannot delete Routine which is not yours",
-            }
-          : {
-              name: "RoutineNotFoundError",
-              message: "That routine does not exist",
-            };
-      }
-    } catch ({ name, message }) {
-      next({ name, message });
-    }
-  }
-);
+// routineActivitiesRouter.delete(
+//   "/:routineActivityId",
+//   requireUser,
+//   async (req, res, next) => {
+//     try {
+//       const id = req.params.routineActivityId;
+//       let creatorId = req.user.id;
+//       const originalRouAct = await getRoutineActivityById(id);
+//       const routineId = routineActivity.routineId;
+//       const routine = await getRoutineById(routineId);
+//       if (routine.creatorId === creatorId) {
+//         const destroyRouAct = await destroyRoutineActivity(id);
+//         console.log("original rouacts", originalRouAct.id);
+//         res.send(destroyRouAct);
+//       } else {
+//         originalRouAct
+//           ? {
+//               name: "UnauthorizedUser",
+//               message: "You cannot delete Routine which is not yours",
+//             }
+//           : {
+//               name: "RoutineNotFoundError",
+//               message: "That routine does not exist",
+//             };
+//       }
+//     } catch ({ name, message }) {
+//       next({ name, message });
+//     }
+//   }
+// );
 
 module.exports = routineActivitiesRouter;
